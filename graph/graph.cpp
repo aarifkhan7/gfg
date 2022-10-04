@@ -12,30 +12,42 @@ class Graph{
     void DFS(int s);
     int countBFS(int s);
     int countDFS(int s);
+    vector<int> listDFS(int s);
     int motherVertex();
     int nodesAtLevel(int l);
     bool isCyclic(int s);
+    void checkPath(int n, int m);
 };
 
-bool Graph::isCyclic(int s){
-    bool visited[V] = {false};
-    queue<int> wait;
-    wait.push(s);
-    while(!wait.empty()){
-        int tmp = wait.front();
-        if(visited[tmp] == false){
-            wait.pop();
-            for(int x : adj[tmp]){
-                wait.push(x);
-            }
-            visited[tmp] = true;
-        }else{
-            wait.pop();
-            return true;
-        }
+void Graph::checkPath(int n, int m){
+    vector<int> d1 = listDFS(n);
+    vector<int> d2 = listDFS(m);
+    if(find(d1.begin(), d1.end(), m) != d1.end() || find(d2.begin(), d2.end(), n) != d2.end()){
+        cout << "Same path...\n";
+    }else{
+        cout << "DIFFERENT!!\n";
     }
-    return false;
 }
+
+// bool Graph::isCyclic(int s){
+//     bool visited[V] = {false};
+//     queue<int> wait;
+//     wait.push(s);
+//     while(!wait.empty()){
+//         int tmp = wait.front();
+//         if(visited[tmp] == false){
+//             wait.pop();
+//             for(int x : adj[tmp]){
+//                 wait.push(x);
+//             }
+//             visited[tmp] = true;
+//         }else{
+//             wait.pop();
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
 int Graph::nodesAtLevel(int l){
     bool visited[V] = {false};
@@ -161,4 +173,24 @@ int Graph::countDFS(int s){
         }
     }
     return count;
+}
+
+vector<int> Graph::listDFS(int s){
+    vector<int> res;
+    bool visited[V] = {false};
+    stack<int> wait;
+    wait.push(s);
+    while(!wait.empty()){
+        int tmp = wait.top();
+        wait.pop();
+        if(visited[tmp] == false){
+            res.push_back(tmp);
+            reverse(adj[tmp].begin(), adj[tmp].end());
+            for(int x : adj[tmp]){
+                wait.push(x);
+            }
+            visited[tmp] = true;
+        }
+    }
+    return res;
 }
