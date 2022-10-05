@@ -17,7 +17,34 @@ class Graph{
     int nodesAtLevel(int l);
     bool isCyclic(int s);
     void checkPath(int n, int m);
+    int countComponents();
 };
+
+int Graph::countComponents(){
+    bool visited[V] = {false};
+    int compCount = 0;
+    for(int i = 0; i < V; i++){
+        if(visited[i] == false){
+            // DFS
+            stack<int> wait;
+            wait.push(i);
+            while(!wait.empty()){
+                int tmp = wait.top();
+                wait.pop();
+                if(visited[tmp] == false){
+                    reverse(adj[tmp].begin(), adj[tmp].end());
+                    for(int x : adj[tmp]){
+                        wait.push(x);
+                    }
+                    visited[tmp] = true;
+                }
+            }
+            // Increase component Count
+            compCount++;
+        }
+    }
+    return compCount;
+}
 
 void Graph::checkPath(int n, int m){
     vector<int> d1 = listDFS(n);
