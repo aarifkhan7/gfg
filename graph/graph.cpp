@@ -1,6 +1,10 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+void print(vector<int> v){
+    for(int x : v) cout << x << ' '; cout << endl;
+}
+
 class Graph{
     public:
     int V;
@@ -18,7 +22,23 @@ class Graph{
     bool isCyclic(int s);
     void checkPath(int n, int m);
     int countComponents();
+    void paths(int s, int t, vector<int> nodes);
 };
+
+void Graph::paths(int s, int t, vector<int> nodes){
+    if(find(nodes.begin(), nodes.end(), s) == nodes.end()){
+        nodes.push_back(s);
+        if(s == t){
+            print(nodes);
+        }else{
+            for(int x : adj[s]){
+                paths(x, t, nodes);
+            }
+        }
+    }else{
+        return;
+    }
+}
 
 int Graph::countComponents(){
     bool visited[V] = {false};
