@@ -1,6 +1,18 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+class wAdjItem{
+    public:
+    int t, w = -1;
+    wAdjItem(int _t){
+        t = _t;
+    }
+    wAdjItem(int _t, int _w){
+        t = _t;
+        w = _w;
+    }
+};
+
 void print(vector<int> v){
     for(int x : v) cout << x << ' '; cout << endl;
 }
@@ -10,8 +22,11 @@ class Graph{
     int V;
     // vector<int> vert;
     vector<list<int>> adj;
+    vector<list<wAdjItem>> wadj;
+    vector<int> dijkDistance;
     Graph(int V);
     void addEdge(int v, int w);
+    void addEdgew(int v, int w, int d);
     void BFS(int s);
     void DFS(int s);
     int countBFS(int s);
@@ -23,7 +38,34 @@ class Graph{
     void checkPath(int n, int m);
     int countComponents();
     void paths(int s, int t, vector<int> nodes);
+    void dijkstra(int s);
 };
+
+void Graph::dijkstra(int s){
+    dijkDistance[s] = 0;
+    vector<bool> visited(V, false);
+    queue<int> wait;
+    wait.push(s);
+    while(!wait.empty()){
+        int tmp = wait.front(); wait.pop();
+        if(!visited[tmp]){
+            for(auto x : wadj[tmp]){
+                if(dijkDistance[tmp] + x.w < dijkDistance[x.t]){
+                    dijkDistance[x.t] = dijkDistance[tmp] + x.w;
+                    visited[x.t] = false;
+                }
+                if(!visited[x.t]){
+                    wait.push(x.t);
+                }
+            }
+        }
+        visited[tmp] = true;
+    }
+}
+
+void Graph::addEdgew(int v, int w, int d){
+    wadj[v].push_back(wAdjItem(w, d));
+}
 
 void Graph::paths(int s, int t, vector<int> nodes){
     if(find(nodes.begin(), nodes.end(), s) == nodes.end()){
@@ -133,9 +175,9 @@ int Graph::motherVertex(){
 
 Graph::Graph(int V){
     this->V = V;
-    // for(int i = 0; i < V; i++)
-        // vert.push_back(i);
     adj.resize(V);
+    wadj.resize(V);
+    dijkDistance.resize(V,INT_MAX);
 }
 
 void Graph::addEdge(int v, int w){
